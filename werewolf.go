@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/labstack/echo"
 )
 
@@ -83,10 +84,10 @@ func CreateApplication(env *Env) (application *Application) {
 	db, err := gorm.Open("mysql", dbConfigStr)
 
 	if err != nil {
-		application.Echo.Logger.Fatal(err)
+		e.Logger.Fatal(err)
 		fmt.Println(err)
 	} else {
-		application.Echo.Logger.Debug("数据库连接成功!")
+		e.Logger.Debug("数据库连接成功!")
 		fmt.Println("(: 数据库连接成功 ...")
 	}
 	e.Use(AddGormToContext(db))
