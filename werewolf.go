@@ -91,7 +91,7 @@ func CreateApplication(env *Env) (application *Application) {
 	e.Use(BetterAppContext)
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
-			c := ctx.(Context)
+			c := ctx.(*Context)
 			c.Config = env
 			return next(c)
 		}
