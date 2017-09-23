@@ -1,0 +1,7 @@
+package: github.com/alixez/werewolf
+import:
+- package: github.com/labstack/echo
+  version: ~3.2.3
+- package: gopkg.in/yaml.v2
+- package: github.com/jinzhu/gorm
+  version: ~1.0.0
