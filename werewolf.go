@@ -89,6 +89,7 @@ func CreateApplication(config *Env) (application *Application) {
 		application.Echo.Logger.Debug("数据库连接成功!")
 		fmt.Println("(: 数据库连接成功 ...")
 	}
+	e.Use(AddGormToContext(db))
 
 	router := &Router{
 		Echo: e,
