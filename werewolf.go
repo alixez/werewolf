@@ -77,6 +77,19 @@ func AddGormToContext(db *gorm.DB) echo.MiddlewareFunc {
 func CreateApplication(config *Env) (application *Application) {
 	e := echo.New()
 	e.Use(BetterAppContext)
+
+	dbConfig := env.GetConfig("database").(map[interface{}]interface{})
+	dbConfigStr := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=True&loc=Local", dbConfig["user"], dbConfig["password"], dbConfig["host"].(string)+":"+dbConfig["port"].(string), dbConfig["db"], dbConfig["charset"])
+	db, err := gorm.Open("mysql", dbConfigStr)
+
+	if err != nil {
+		application.Echo.Logger.Fatal(err)
+		fmt.Println(err)
+	} else {
+		application.Echo.Logger.Debug("数据库连接成功!")
+		fmt.Println("(: 数据库连接成功 ...")
+	}
+
 	router := &Router{
 		Echo: e,
 	}
