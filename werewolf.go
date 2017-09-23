@@ -74,7 +74,7 @@ func AddGormToContext(db *gorm.DB) echo.MiddlewareFunc {
 	}
 }
 
-func CreateApplication(config *Env) (application *Application) {
+func CreateApplication(env *Env) (application *Application) {
 	e := echo.New()
 	e.Use(BetterAppContext)
 
