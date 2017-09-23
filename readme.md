@@ -9,7 +9,22 @@
 * github.com/jinzhu/orm
 * gopkg.in/yaml.v2
 
+## 若你想在你的项目里面使用它，请...
+
+```
+go get -u github.com/alixez/werewolf
+```
+
+**如果你经常使用glide作为依赖管理工具**
+
+```
+glide get -u github.com/alixez/werewolf
+```
+
 > 哈哈，当然现在项目还处于初始阶段。但是随着我们 异样（一个专属年轻人的，潮流文化社区） 项目的开发里程的不断推进，这个框架也会不断的完善。
 最终，当它可公开使用时，我们就开始写文档，并正式发布这个框架。waiting...
+
+
+> 最后，感谢下这个叫 Ningxin的童鞋。因为差一点名字就变成 ningxin 了。想想，这个是一件多么恐怖的事情 ^(o^^o)!
 
 
