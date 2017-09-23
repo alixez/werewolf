@@ -13,7 +13,7 @@ type (
 	Application struct {
 		Echo        *echo.Echo
 		Controllers map[string]interface{}
-		Services    map[string]interface{}
+		Services    map[string]ServiceInterface
 		Router      *Router
 	}
 
@@ -30,7 +30,7 @@ func (this *Application) AddController(controller interface{}) {
 	this.Controllers[this.getType(controller).Name()] = controller
 }
 
-func (this *Application) AddService(service interface{}) {
+func (this *Application) AddService(service ServiceInterface) {
 	this.Services[this.getType(service).Name()] = service
 }
 
@@ -40,6 +40,16 @@ func (this *Application) initRouter() {
 
 func (this *Application) Boot(callback BootCallBackFunc) {
 	callback(this)
+
+	// 注入已经注册的service
+	this.Echo.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			cc := c.(*Context)
+			cc.services = this.Services
+			return next(cc)
+		}
+	})
+
 	this.initRouter()
 }
 
@@ -59,6 +69,7 @@ func BetterAppContext(next echo.HandlerFunc) echo.HandlerFunc {
 				Data:    map[string]interface{}{},
 			},
 			map[string]interface{}{},
+			nil,
 		}
 
 		return next(cc)
@@ -78,19 +89,13 @@ func AddGormToContext(db *gorm.DB) echo.MiddlewareFunc {
 func CreateApplication(env *Env) (application *Application) {
 	e := echo.New()
 	e.Use(BetterAppContext)
-
-	dbConfig := env.GetConfig("database").(map[interface{}]interface{})
-	dbConfigStr := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=True&loc=Local", dbConfig["user"], dbConfig["password"], dbConfig["host"].(string)+":"+dbConfig["port"].(string), dbConfig["db"], dbConfig["charset"])
-	db, err := gorm.Open("mysql", dbConfigStr)
-
-	if err != nil {
-		e.Logger.Fatal(err)
-		fmt.Println(err)
-	} else {
-		e.Logger.Debug("数据库连接成功!")
-		fmt.Println("(: 数据库连接成功 ...")
-	}
-	e.Use(AddGormToContext(db))
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(ctx echo.Context) error {
+			c := ctx.(Context)
+			c.Config = env
+			return next(c)
+		}
+	})
 
 	router := &Router{
 		Echo: e,
@@ -99,7 +104,7 @@ func CreateApplication(env *Env) (application *Application) {
 		Echo:        e,
 		Router:      router,
 		Controllers: make(map[string]interface{}),
-		Services:    make(map[string]interface{}),
+		Services:    make(map[string]ServiceInterface),
 	}
 	return
 }

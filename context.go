@@ -1,32 +1,32 @@
 package werewolf
 
 import (
-	"errors"
-	"reflect"
-
 	"github.com/labstack/echo"
 )
 
 type Context struct {
 	echo.Context
-	services    map[string]reflect.Value
+	services    map[string]ServiceInterface
 	apiResponse *APIResponse
-	DBHelper    map[string]interface{}
+	dbHelper    map[string]interface{}
+	Config      *Env
 }
 
 func (this *Context) AddDBHelper(name string, value interface{}) {
-	this.DBHelper[name] = value
+	this.dbHelper[name] = value
 }
 
 func (this *Context) GetDB(name string) interface{} {
-	return this.DBHelper[name]
+	return this.dbHelper[name]
 }
 
-func (this *Context) GetService(name string) (error, interface{}) {
-	service := this.services[name]
-	if service.Interface() == nil {
-		return errors.New("Not exists the service"), nil
-	}
+func (this *Context) SetServices(services map[string]ServiceInterface) {
 
-	return nil, service.Interface()
+	this.services = services
+}
+
+func (this *Context) GetService(name string) ServiceInterface {
+	service := this.services[name]
+	service.Init(this)
+	return service
 }
