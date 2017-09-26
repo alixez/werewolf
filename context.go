@@ -80,13 +80,13 @@ func (this *Context) executeUploadedFile(file *multipart.FileHeader, subpath str
 	dstPath := filepath.Join(orignailPath, subpath)
 
 	if !utils.IsDirExist(rootPath) {
-		os.Mkdir(rootPath, 0666)
+		os.Mkdir(rootPath, 0777)
 	}
 	if !utils.IsDirExist(tumbnailPath) {
-		os.Mkdir(tumbnailPath, 0666)
+		os.Mkdir(tumbnailPath, 0777)
 	}
 	if !utils.IsDirExist(orignailPath) {
-		os.Mkdir(orignailPath, 0666)
+		os.Mkdir(orignailPath, 0777)
 	}
 
 	src, err := file.Open()
@@ -95,7 +95,7 @@ func (this *Context) executeUploadedFile(file *multipart.FileHeader, subpath str
 	}
 	defer src.Close()
 	if !utils.IsDirExist(dstPath) {
-		os.MkdirAll(dstPath, 0666)
+		os.MkdirAll(dstPath, 0777)
 	}
 	dst, err := os.Create(filepath.Join(dstPath, filename))
 	if err != nil {
