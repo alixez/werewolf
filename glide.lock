@@ -1,5 +1,5 @@
-hash: d2287c4512f5855e4a066dc9b11977b8ccfedab853266f5e415d44bede36f696
-updated: 2017-09-23T15:04:17.815980613+08:00
+hash: 1b0d455de65cf7cf949ef2580fea65fb20065f9f48641f394bb1fbb83572235b
+updated: 2017-09-26T15:30:19.728189373+08:00
 imports:
 - name: github.com/go-sql-driver/mysql
   version: a0583e0143b1624142adab07e0e97fe106d99561
@@ -12,20 +12,22 @@ imports:
 - name: github.com/labstack/echo
   version: cec7629194fe4bf83b0c72d9a02d340c7a1468ac
 - name: github.com/labstack/gommon
-  version: 779b8a8b9850a97acba6a3fe20feb628c39e17c1
+  version: 57409ada9da0f2afad6664c49502f8c50fbd8476
   subpackages:
   - color
   - log
 - name: github.com/mattn/go-colorable
   version: ad5389df28cdac544c99bd7b9161a0b5b6ca9d1b
 - name: github.com/mattn/go-isatty
-  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
+  version: a5cdd64afdee435007ee3e9f6ed4684af949d568
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/valyala/bytebufferpool
   version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
 - name: github.com/valyala/fasttemplate
   version: dcecefd839c4193db0d35b88ec65b4c12d360ab0
 - name: golang.org/x/crypto
-  version: 7d9177d70076375b9a59c8fde23d52d9c4a7ecd5
+  version: 847319b7fc94cab682988f93da778204da164588
   subpackages:
   - acme
   - acme/autocert
