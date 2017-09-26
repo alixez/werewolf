@@ -67,7 +67,11 @@ func (this *Context) SaveFileToStorage(fields string, subpath string) (*File, er
 
 func (this *Context) executeUploadedFile(file *multipart.FileHeader, subpath string) (*File, error) {
 	config := this.Config
-	storage := config.GetConfig("storage").(map[string]string)
+	storageInterface := config.GetConfig("storage").(map[interface{}]interface{})
+	storage := make(map[string]string)
+	for k, v := range storageInterface {
+		storage[k.(string)] = v.(string)
+	}
 	rootPath := storage["root"]
 	tumbnailPath := filepath.Join(rootPath, storage["tumbnail"])
 	orignailPath := filepath.Join(rootPath, storage["orignail"])
