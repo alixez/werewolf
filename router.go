@@ -45,6 +45,10 @@ type Router struct {
 	ControllersIndex map[string]interface{}
 }
 
+func (appRoute *Router) Group(perfix string, m ...echo.MiddlewareFunc) *echo.Group {
+	return appRoute.Echo.Group(perfix, m...)
+}
+
 func (appRoute *Router) Get(url string, actionStr string, m ...echo.MiddlewareFunc) {
 	actionArr, err := ParseActionStr(actionStr)
 	appRoute.Echo.GET(url, func(c echo.Context) error {
