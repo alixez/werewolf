@@ -40,13 +40,60 @@ func ParseActionStr(str string) ([]string, error) {
 	return arr, nil
 }
 
-type Router struct {
-	Echo             *echo.Echo
-	ControllersIndex map[string]interface{}
+type (
+	Router struct {
+		Echo             *echo.Echo
+		ControllersIndex map[string]interface{}
+	}
+
+	Group struct {
+		echoGroup *echo.Group
+		router    *Router
+	}
+)
+
+func (g *Group) Group(perfix string, m ...echo.MiddlewareFunc) *Group {
+	echoGroup := g.echoGroup.Group(perfix, m...)
+
+	group := &Group{
+		echoGroup,
+		g.router,
+	}
+
+	return group
 }
 
-func (appRoute *Router) Group(perfix string, m ...echo.MiddlewareFunc) *echo.Group {
-	return appRoute.Echo.Group(perfix, m...)
+func (g *Group) Get(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.GET(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+func (g *Group) Post(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.POST(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+func (appRoute *Router) Group(perfix string, m ...echo.MiddlewareFunc) *Group {
+	echoGroup := appRoute.Echo.Group(perfix, m...)
+
+	group := &Group{
+		echoGroup,
+		appRoute,
+	}
+
+	return group
 }
 
 func (appRoute *Router) Get(url string, actionStr string, m ...echo.MiddlewareFunc) {
