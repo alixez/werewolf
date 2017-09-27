@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo"
 )
 
+// HandleFunc is custom router action handler
 func HandleFunc(ctx echo.Context, action string, method string, controllerIndex map[string]interface{}) error {
 	c := ctx.(*Context)
 	if controllerIndex[action] == nil {
@@ -30,6 +31,7 @@ func HandleFunc(ctx echo.Context, action string, method string, controllerIndex 
 
 }
 
+// ParseActionStr is to parse action string like 'DemoController@ActionFunc'
 func ParseActionStr(str string) ([]string, error) {
 	arr := strings.Split(str, "@")
 
@@ -41,17 +43,22 @@ func ParseActionStr(str string) ([]string, error) {
 }
 
 type (
+	// Router class # 路由
 	Router struct {
 		Echo             *echo.Echo
 		ControllersIndex map[string]interface{}
 	}
 
+	// Group class # 路由组
 	Group struct {
 		echoGroup *echo.Group
 		router    *Router
 	}
 )
 
+// Group class ======================== START
+
+// Group is a custom router group extend echo.Group
 func (g *Group) Group(perfix string, m ...echo.MiddlewareFunc) *Group {
 	echoGroup := g.echoGroup.Group(perfix, m...)
 
@@ -63,6 +70,12 @@ func (g *Group) Group(perfix string, m ...echo.MiddlewareFunc) *Group {
 	return group
 }
 
+// Use is a func of Group to use middleware
+func (g *Group) Use(middleware ...echo.MiddlewareFunc) {
+	g.echoGroup.Use(middleware...)
+}
+
+// Get is a func to set get method router for current group
 func (g *Group) Get(url string, actionStr string, m ...echo.MiddlewareFunc) {
 	actionArr, err := ParseActionStr(actionStr)
 	g.echoGroup.GET(url, func(c echo.Context) error {
@@ -74,6 +87,7 @@ func (g *Group) Get(url string, actionStr string, m ...echo.MiddlewareFunc) {
 	}, m...)
 }
 
+// Post is a func to set post method router for group
 func (g *Group) Post(url string, actionStr string, m ...echo.MiddlewareFunc) {
 	actionArr, err := ParseActionStr(actionStr)
 	g.echoGroup.POST(url, func(c echo.Context) error {
@@ -85,6 +99,75 @@ func (g *Group) Post(url string, actionStr string, m ...echo.MiddlewareFunc) {
 	}, m...)
 }
 
+func (g *Group) Delete(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.DELETE(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+func (g *Group) Put(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.PUT(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+func (g *Group) Patch(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.PATCH(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+func (g *Group) Any(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.Any(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+func (g *Group) Trace(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.TRACE(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+func (g *Group) Options(url string, actionStr string, m ...echo.MiddlewareFunc) {
+	actionArr, err := ParseActionStr(actionStr)
+	g.echoGroup.OPTIONS(url, func(c echo.Context) error {
+		if err != nil {
+			return err
+		}
+
+		return HandleFunc(c, actionArr[0], actionArr[1], g.router.ControllersIndex)
+	}, m...)
+}
+
+// Group class ======================== END
+
+// Group is a func to group router
 func (appRoute *Router) Group(perfix string, m ...echo.MiddlewareFunc) *Group {
 	echoGroup := appRoute.Echo.Group(perfix, m...)
 
